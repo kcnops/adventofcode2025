@@ -27,6 +27,7 @@ row = 0
 cols = set()
 for idx, place in enumerate(lines[row]):
     if place == 'S':
+        cols_with_times = {idx: 1}
         cols.add(idx)
 
 if len(cols) == 0:
@@ -36,16 +37,18 @@ splits = 0
 
 row += 2
 while row < depth:
-    new_cols = set()
-    for col in cols:
+    new_cols_with_times = {}
+    for col, times in cols_with_times.items():
         if lines[row][col] == '^':
             print('split')
             splits += 1
-            new_cols.add(col-1)
-            new_cols.add(col+1)
+            new_cols_with_times[col-1] = new_cols_with_times.get(col-1,0) + cols_with_times[col]
+            new_cols_with_times[col+1] = new_cols_with_times.get(col+1,0) + cols_with_times[col]
         if lines[row][col] == '.':
-            new_cols.add(col)
-    cols = new_cols
+            new_cols_with_times[col] = new_cols_with_times.get(col,0) + cols_with_times[col]
+    cols_with_times = new_cols_with_times
     row += 2
 
 print(splits)
+# print(new_cols_with_times)
+print(sum(new_cols_with_times.values()))
